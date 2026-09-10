@@ -1,31 +1,30 @@
-import dotenv from "dotenv"
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
-if (!process.env.MONGO_URI) {
-  throw new Error("MONTO_URI doesn't exists in the enviroment variable ")
-}
+const requiredEnv = [
+  "MONGO_URI",
+  "IMAGEKIT_PRIVATE_KEY",
+  "CLIENT_ID",
+  "CLIENT_SECRET",
+  "REFRESH_TOKEN",
+  "EMAIL_USER",
+  "JWT_SECRET"
+];
 
-if (!process.env.JWT_SECRET) {
-  throw new Error("JWT_SECRET doesn't exists in the enviroment variable")
-}
-
-
-if (!process.env.EMAIL_USER) {
-  throw new Error("EMAIL_USER doesn't exists in the enviroment variable")
-}
-
-
-if (!process.env.EMAIL_PASS) {
-  throw new Error("EMAIL_PASS doesn't exists in the enviroment variable")
+for (const key of requiredEnv) {
+  if (!process.env[key]) {
+    throw new Error(`${key} is required`);
+  }
 }
 
 const config = {
   MONGO_URI: process.env.MONGO_URI,
-  JWT_SECRET: process.env.JWT_SECRET,
-  EMAIL_USER: process.env.EMAIL_USER,
-  EMAIL_PASS: process.env.EMAIL_PASS
-}
+  IMAGEKIT_PRIVATE_KEY: process.env.IMAGEKIT_PRIVATE_KEY,
+  CLIENT_ID: process.env.CLIENT_ID,
+  CLIENT_SECRET: process.env.CLIENT_SECRET,
+  REFRESH_TOKEN: process.env.REFRESH_TOKEN,
+  EMAIL_USER: process.env.EMAIL_USER
+};
 
-export default config
-
+export default config;

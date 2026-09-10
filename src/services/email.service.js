@@ -1,23 +1,25 @@
 import nodemailer from "nodemailer"
-import config from "../config/config.js"
 
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
+  service: 'gmail',
   auth: {
-    user: config.EMAIL_USER,
-    pass: config.EMAIL_PASS
-  }
-})
+    type: 'OAuth2',
+    user: process.env.EMAIL_USER,
+    clientId: process.env.CLIENT_ID,
+    clientSecret: process.env.CLIENT_SECRET,
+    refreshToken: process.env.REFRESH_TOKEN,
+  },
+});
 
+// Verify the connection configuration
 transporter.verify((error, success) => {
   if (error) {
-    console.log("Error connecting to mail server", error)
+    console.error('Error connecting to email server:', error);
   } else {
-    console.log("Email server is ready to send messages")
+    console.log('Email server is ready to send messages');
   }
-})
+});
+
 
 export const sendEmail = async (to, subject, text, html) => {
   try {
