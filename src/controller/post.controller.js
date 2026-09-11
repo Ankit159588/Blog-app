@@ -1,28 +1,44 @@
 import { uploadImage } from "../services/imageKit.service.js";
+import userModel from "../model/user.model.js";
+import postModel from "../model/post.model.js";
 
 export async function addPost(req, res) {
   try {
     console.log("BODY:", req.body);
     console.log("FILE:", req.file);
 
-    if (!req.file) {
+    const { title, content } = req.body;
+    const author = req.user.id;
 
+
+    if (!title || !content) {
+      return res.status(400).json({
+        message: "Title and content are required"
+      });
+    }
+
+
+    if (!req.file) {
       return res.status(400).json({
         message: "Image is required"
       });
     }
-
-    console.log("Buffer size:", req.file.buffer.length);
 
     const imageUrl = await uploadImage(
       req.file.buffer,
       req.file.originalname
     );
 
+    const post = await postModel.create({
+      title: title,
+      content: content,
+      image: imageUrl,
+      author: author
+    })
+
     return res.status(201).json({
       message: "Post created successfully",
-      body: req.body,
-      imageUrl: imageUrl
+      post
     });
 
   } catch (error) {

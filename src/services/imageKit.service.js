@@ -12,5 +12,6 @@ export const uploadImage = async (buffer, fileName) => {
     fileName: fileName
   });
 
+
   return result.url;
 };
