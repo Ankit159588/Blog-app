@@ -198,9 +198,6 @@ export async function login(req, res) {
 
 }
 
-export async function logout(req, res) {
-
-}
 
 export async function rotateToken(req, res) {
   const refreshToken = req.cookies.refreshToken
@@ -273,6 +270,7 @@ export async function rotateToken(req, res) {
     });
 
     return res.status(200).json({
+      message: "access token refreshed successfully",
       accessToken
     });
   } catch (error) {
@@ -284,7 +282,58 @@ export async function rotateToken(req, res) {
 
 }
 
+export async function logout(req, res) {
+  const refreshToken = req.cookies.refreshToken;
 
+  if (!refreshToken) {
+    return res.status(401).json({
+      message: "Refresh token not found"
+    });
+  }
+
+  try {
+    const decoded = jwt.verify(refreshToken, config.JWT_SECRET);
+
+    const session = await sessionModel.findOne({
+      _id: decoded.session_id,
+      user: decoded.id,
+      revoked: false
+    });
+
+    if (!session) {
+      return res.status(400).json({
+        message: "Session not found"
+      });
+    }
+
+    const isMatch = await bcrypt.compare(
+      refreshToken,
+      session.refreshTokenHash
+    );
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: "Invalid refresh token"
+      });
+    }
+
+    session.revoked = true;
+    await session.save();
+
+    res.clearCookie("refreshToken");
+
+    return res.status(200).json({
+      message: "User logged out successfully"
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(400).json({
+      message: "Invalid refresh token"
+    });
+  }
+}
 
 
 
