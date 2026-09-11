@@ -31,7 +31,6 @@ const postSchema = new mongoose.Schema(
 // Hide these fields from API JSON response
 postSchema.set("toJSON", {
   transform: (doc, ret) => {
-    delete ret._id;
     delete ret.createdAt;
     delete ret.updatedAt;
     delete ret.__v;

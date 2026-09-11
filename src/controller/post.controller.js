@@ -50,3 +50,105 @@ export async function addPost(req, res) {
     });
   }
 }
+
+export async function getAllPosts(req, res) {
+  try {
+    const posts = await postModel.find({
+      author: req.user.id
+    });
+
+    return res.status(200).json({
+      posts
+    });
+
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      error: error,
+      message: "Failed to get posts"
+    });
+  }
+}
+
+export async function getPostById(req, res) {
+  try {
+    const postId = req.params.id;
+
+    const post = await postModel.findById(postId);
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found"
+      });
+    }
+
+    return res.status(200).json({
+      post
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Failed to get post by id",
+      error: error
+    });
+  }
+}
+
+export async function deletePostById(req, res) {
+  try {
+
+    const postId = req.params.id;
+
+    const post = await postModel.findByIdAndDelete({
+      _id: postId,
+      author: req.user.id
+    });
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found"
+      });
+    }
+
+    return res.status(200).json({
+      message: "Post deleted successfully"
+    });
+  } catch (error) {
+    console.log(error)
+
+    return res.status(500).json({
+      messsage: "Failed to delete the post by id",
+      error: error
+    })
+  }
+}
+
+export async function deleteAllPosts(req, res) {
+  try {
+    const result = await postModel.deleteMany({
+      author: req.user.id
+    });
+
+    return res.status(200).json({
+      message: "All posts deleted successfully",
+      deletedCount: result.deletedCount
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Failed to delete all posts",
+      error: error
+    });
+  }
+}
+
+
+
+
+
+
+
+

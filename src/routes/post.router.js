@@ -11,4 +11,12 @@ const postRouter = Router()
 
 postRouter.post("/posts", authMiddleware, upload.single("image"), postcontroller.addPost)
 
+postRouter.get("/get-all-posts", authMiddleware, postcontroller.getAllPosts)
+
+postRouter.get("/get-post/:id", authMiddleware, postcontroller.getPostById)
+
+postRouter.delete("/delete-post/:id", authMiddleware, postcontroller.deletePostById)
+
+postRouter.delete("/delete-all-posts", authMiddleware, postcontroller.deletePostById)
+
 export default postRouter;
