@@ -31,7 +31,7 @@ export async function register(req, res) {
     const html = getOtpHtml(otp)
     const otpHash = await bcrypt.hash(otp, 10)
 
-    otpModel.deleteMany({
+    await otpModel.deleteMany({
       email: existingUser.email
     })
 
