@@ -1,0 +1,32 @@
+frontend/
+│
+├── src/
+│   │
+│   ├── components/
+│   │   ├── Navbar.jsx
+│   │   ├── PostCard.jsx
+│   │   └── ProtectedRoute.jsx
+│   │
+│   ├── pages/
+│   │   ├── Home.jsx
+│   │   ├── Login.jsx
+│   │   ├── Register.jsx
+│   │   ├── VerifyEmail.jsx
+│   │   ├── PostDetails.jsx
+│   │   ├── CreatePost.jsx
+│   │   ├── EditPost.jsx
+│   │   └── MyPosts.jsx
+│   │
+│   ├── services/
+│   │   └── api.js
+│   │
+│   ├── App.jsx
+│   ├── main.jsx
+│   └── index.css
+│
+├── public/
+│
+├── .env
+├── .gitignore
+├── package.json
+└── vite.config.js
