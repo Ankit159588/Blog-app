@@ -19,4 +19,6 @@ postRouter.delete("/delete-post/:id", authMiddleware, postcontroller.deletePostB
 
 postRouter.delete("/delete-all-posts", authMiddleware, postcontroller.deletePostById)
 
+postRouter.patch("/update-post/:id", authMiddleware, postcontroller.updatePost)
+
 export default postRouter;

@@ -145,7 +145,41 @@ export async function deleteAllPosts(req, res) {
   }
 }
 
+export async function updatePost(req, res) {
+  try {
+    const postId = req.params.id
+    const { title, content } = req.body
 
+    const post = await postModel.findOneAndUpdate({
+      _id: postId,
+      author: req.user.id
+    }, {
+      title,
+      content
+    }, {
+      new: true,
+      runValidators: true
+    })
+
+    if (!post) {
+      return res.status(404).json({
+        message: "Post not found or you are not the owner"
+      });
+    }
+
+    return res.status(200).json({
+      message: "Post updated successfully",
+      post
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Failed to update post",
+      error: error
+    });
+  }
+}
 
 
 
