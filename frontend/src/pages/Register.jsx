@@ -1,12 +1,14 @@
 import { useState } from "react";
 import { registerUser } from "../services/api";
 import { useNavigate } from "react-router-dom";
+import ErrorToast from "../components/ErrorToast";
 
 const Register = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const handleLoginRedirect = () => {
     navigate("/login");
@@ -21,16 +23,19 @@ const Register = () => {
       password,
     };
 
-    const data = await registerUser(userData);
-    console.log(data);
+    const response = await registerUser(userData);
+    console.log(response);
 
-    if (data) {
-      navigate("/verify-email", {
-        state: {
-          userEmail: email,
-        },
-      });
+    if (!response.success) {
+      setError(response.data.message);
+      return;
     }
+
+    navigate("/verify-email", {
+      state: {
+        userEmail: email,
+      },
+    });
   };
   return (
     <div className="register-page">

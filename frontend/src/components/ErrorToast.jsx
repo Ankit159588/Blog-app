@@ -21,7 +21,7 @@ const ErrorToast = ({ message, duration = 5, onClose }) => {
   return (
     <div className="error-toast">
       <div className="error-content">
-        <CircleAlert className="error-icon" onClick={onclose} size={20} />
+        <CircleAlert className="error-icon" onClick={onClose} size={20} />
         <div>
           <p className="error-message">{message}</p>
           <small>Disappearing in {time}s</small>

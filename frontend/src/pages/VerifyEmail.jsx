@@ -1,17 +1,21 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { userEmailVerify } from "../services/api";
+import ErrorToast from "../components/ErrorToast";
+
 const VerifyEmail = () => {
   const location = useLocation();
   const navigate = useNavigate();
+
+  const [error, setError] = useState("");
 
   const handleResend = () => {
     navigate("/register");
   };
 
+  const [otp, setOtp] = useState("");
   const email = location.state?.userEmail;
 
-  const [otp, setOtp] = useState("");
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -20,12 +24,20 @@ const VerifyEmail = () => {
       otp,
     };
 
-    const data = await userEmailVerify(userData);
-    console.log(data);
-  };
+    const response = await userEmailVerify(userData);
 
+    if (!response.success) {
+      setError(response.data.message);
+      return;
+    }
+
+    console.log(response);
+  };
   return (
     <div>
+      {error && (
+        <ErrorToast message={error} duration={5} onClose={() => setError("")} />
+      )}
       <div className="verify-page">
         <h1>Simple Blog App</h1>
         <div className="verify-card">

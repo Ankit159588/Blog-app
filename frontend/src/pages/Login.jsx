@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { userLogin } from "../services/api";
 import ErrorToast from "../components/ErrorToast";
 
-const Login = () => {
+const Login = ({ setAccessToken }) => {
   const navigate = useNavigate();
 
   const handleRegisterRedirect = () => {
@@ -22,18 +22,22 @@ const Login = () => {
       password,
     };
 
-    const data = await userLogin(userData);
-
-    if (!data.success) {
-      setError(data.message);
+    const response = await userLogin(userData);
+    if (!response.success) {
+      setError(response.data.message);
       return;
     }
 
-    console.log(data);
+    setAccessToken(response.data.accessToken);
+    navigate("/");
+    console.log(response);
   };
 
   return (
     <div className="login-page">
+      {error && (
+        <ErrorToast message={error} duration={5} onClose={() => setError("")} />
+      )}
       <h1>Simple Blog App</h1>
 
       <h2>Welcome Back</h2>
