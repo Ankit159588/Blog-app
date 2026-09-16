@@ -1,90 +1,92 @@
 import { useState } from "react";
 import { registerUser } from "../services/api";
+import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import ErrorToast from "../components/ErrorToast";
 
-const Register = () => {
-  const navigate = useNavigate();
+export default function Register() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const navigate = useNavigate();
 
-  const handleLoginRedirect = () => {
-    navigate("/login");
-  };
-
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    const userData = {
-      username,
-      email,
-      password,
-    };
+    try {
+      const userData = {
+        username,
+        email,
+        password,
+      };
 
-    const response = await registerUser(userData);
-    console.log(response);
+      const response = await registerUser(userData);
 
-    if (!response.success) {
-      setError(response.data.message);
-      return;
+      if (!response.success) {
+        console.log(response.data.message);
+        return;
+      }
+      console.log(response.data);
+
+      navigate("/verify-email", {
+        state: {
+          userEmail: response.data.user.email,
+        },
+      });
+    } catch (error) {
+      console.log(error);
     }
+  }
 
-    navigate("/verify-email", {
-      state: {
-        userEmail: email,
-      },
-    });
-  };
   return (
-    <div className="register-page">
-      <h1>Simple Blog App</h1>
-      <h2>Create Account</h2>
-      <p className="register-subtitle">
-        {" "}
-        Create your account and start sharing your thoughts.{" "}
-      </p>
+    <div className="container">
+      <div className="auth-card">
+        <div className="auth-card__eyebrow">New here</div>
+        <h1>Create an account</h1>
+        <p className="subtitle">Join to start writing and reading posts.</p>
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label> Username </label>
-          <input
-            type="text"
-            placeholder="Enter your username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
+        <form onSubmit={handleSubmit}>
+          <div className="field">
+            <label htmlFor="username">Username</label>
+            <input
+              onChange={(e) => setUsername(e.target.value)}
+              value={username}
+              id="username"
+              type="text"
+              placeholder="jane_doe"
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <input
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+            />
+          </div>
+
+          <div className="field">
+            <label htmlFor="password">Password</label>
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              id="password"
+              type="password"
+              placeholder="••••••••"
+            />
+          </div>
+
+          <button type="submit" className="btn btn--block">
+            Create account
+          </button>
+        </form>
+
+        <div className="form-footer">
+          Already have an account? <Link to="/login">Log in</Link>
         </div>
-        <div className="form-group">
-          <label> Email </label>
-          <input
-            type="email"
-
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-            value={email}
-          />
-        </div>
-        <div className="form-group">
-          <label> Password </label>
-          <input
-            type="password"
-            placeholder="Enter your password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </div>
-
-        <button type="submit">Create Account </button>
-      </form>
-
-      <p className="login-text">
-        Already have an account?{" "}
-        <span onClick={handleLoginRedirect}> login</span>
-      </p>
+      </div>
     </div>
   );
-};
-
-export default Register;
+}

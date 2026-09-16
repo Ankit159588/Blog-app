@@ -1,81 +1,76 @@
+import { Link } from "react-router-dom";
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { userLogin } from "../services/api";
-import ErrorToast from "../components/ErrorToast";
+import { LoginUser } from "../services/api";
+import { useNavigate } from "react-router-dom/dist";
 
-const Login = ({ setAccessToken }) => {
+export default function Login({ setAccessToken }) {
   const navigate = useNavigate();
-
-  const handleRegisterRedirect = () => {
-    navigate("/register");
-  };
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
 
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
 
-    const userData = {
-      email,
-      password,
-    };
+    try {
+      const userData = {
+        email,
+        password,
+      };
 
-    const response = await userLogin(userData);
-    if (!response.success) {
-      setError(response.data.message);
-      return;
+      const response = await LoginUser(userData);
+
+      if (!response.success) {
+        console.log(response.data.message);
+        return;
+      }
+      setAccessToken(response.data.token);
+      console.log(response.data);
+
+      navigate("/");
+    } catch (error) {
+      console.log(error);
     }
-
-    setAccessToken(response.data.accessToken);
-    navigate("/");
-    console.log(response);
-  };
+  }
 
   return (
-    <div className="login-page">
-      {error && (
-        <ErrorToast message={error} duration={5} onClose={() => setError("")} />
-      )}
-      <h1>Simple Blog App</h1>
+    <div className="container">
+      <div className="auth-card">
+        <div className="auth-card__eyebrow">Welcome back</div>
+        <h1>Log in</h1>
+        <p className="subtitle">Pick up where you left off.</p>
 
-      <h2>Welcome Back</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="field">
+            <label htmlFor="email">Email</label>
+            <input
+              onChange={(e) => setEmail(e.target.value)}
+              value={email}
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+            />
+          </div>
 
-      <p className="login-subtitle">
-        Login to your account and continue sharing your thoughts.
-      </p>
+          <div className="field">
+            <label htmlFor="password">Password</label>
+            <input
+              onChange={(e) => setPassword(e.target.value)}
+              value={password}
+              id="password"
+              type="password"
+              placeholder="••••••••"
+            />
+          </div>
 
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label>Email</label>
-          <input
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Enter your email"
-          />
+          <button type="submit" className="btn btn--block">
+            Log in
+          </button>
+        </form>
+
+        <div className="form-footer">
+          Don't have an account? <Link to="/register">Sign up</Link>
         </div>
-
-        <div className="form-group">
-          <label>Password</label>
-          <input
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Enter your password"
-          />
-        </div>
-
-        <button type="submit">Login</button>
-      </form>
-
-      <p className="register-text">
-        Don't have an account?{" "}
-        <span onClick={handleRegisterRedirect}>Register</span>
-      </p>
+      </div>
     </div>
   );
-};
-
-export default Login;
+}

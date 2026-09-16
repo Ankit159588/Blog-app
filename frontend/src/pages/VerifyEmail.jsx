@@ -1,73 +1,76 @@
 import { useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
-import { userEmailVerify } from "../services/api";
-import ErrorToast from "../components/ErrorToast";
+import { VerifyEmailUser } from "../services/api";
+import { useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
-const VerifyEmail = () => {
+export default function VerifyEmail() {
+  const [otp, setOtp] = useState("");
+
   const location = useLocation();
   const navigate = useNavigate();
-
-  const [error, setError] = useState("");
-
-  const handleResend = () => {
-    navigate("/register");
-  };
-
-  const [otp, setOtp] = useState("");
   const email = location.state?.userEmail;
-
-  const handleSubmit = async (e) => {
+  async function handleSubmit(e) {
     e.preventDefault();
+    try {
+      const data = {
+        otp,
+        email,
+      };
 
-    const userData = {
-      email,
-      otp,
-    };
-
-    const response = await userEmailVerify(userData);
-
-    if (!response.success) {
-      setError(response.data.message);
-      return;
+      const response = await VerifyEmailUser(data);
+      if (!response.success) {
+        console.log(response.data.message);
+        return;
+      }
+      navigate("/login");
+      console.log(response.data.message);
+    } catch (error) {
+      console.log(error);
     }
+  }
 
-    console.log(response);
-  };
   return (
-    <div>
-      {error && (
-        <ErrorToast message={error} duration={5} onClose={() => setError("")} />
-      )}
-      <div className="verify-page">
-        <h1>Simple Blog App</h1>
-        <div className="verify-card">
-          <h2>Verify Your Email</h2>
-          <p className="verify-subtitle">
-            {" "}
-            We have sent a verification code to your {email}. Enter the code
-            below to verify your account.{" "}
-          </p>
-          <form onSubmit={handleSubmit}>
-            <div className="form-group">
-              <label> Verificaiton Code </label>
-              <input
-                type="text"
-                placeholder="Enter 6 digit OTP"
-                maxLength={6}
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-              />
-            </div>
-            <button type="submit">Verify Email</button>
-          </form>
-          <p className="resend-text">
-            Didn't receive the code?{" "}
-            <span onClick={handleResend}>Resend OTP</span>
-          </p>{" "}
+    <div className="container">
+      <div className="auth-card">
+        <div className="auth-card__eyebrow">One more step</div>
+
+        <h1>Verify your email</h1>
+
+        <p className="subtitle">
+          We sent a 6-digit code to your email. Enter it below.
+        </p>
+
+        <form onSubmit={handleSubmit}>
+          <div className="field field-otp">
+            <label htmlFor="otp">Verification code</label>
+
+            <input
+              onChange={(e) => setOtp(e.target.value)}
+              value={otp}
+              id="otp"
+              type="text"
+              inputMode="numeric"
+              maxLength={6}
+              placeholder="000000"
+            />
+          </div>
+
+          <button type="submit" className="btn btn--block">
+            Verify
+          </button>
+        </form>
+
+        <div className="form-footer">
+          Didn't get a code?{" "}
+          <button
+            type="button"
+            className="btn btn--ghost"
+            style={{ padding: 0 }}
+          >
+            Resend
+          </button>
         </div>
       </div>
     </div>
   );
-};
-
-export default VerifyEmail;
+}
