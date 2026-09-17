@@ -140,3 +140,69 @@ export const getPostById = async (id, accessToken) => {
     };
   }
 };
+
+export const logoutUser = async (accessToken) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/logout`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      success: false,
+      data: error.response?.data,
+    };
+  }
+};
+
+export const getMe = async (accessToken) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/auth/getMe`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      success: false,
+      data: error.response?.data,
+    };
+  }
+};
+
+export const deletePostById = async (id, accessToken) => {
+  try {
+    const response = await axios.delete(`${BASE_URL}/delete-post/${id}`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+
+    return {
+      success: true,
+      data: response.data,
+    };
+  } catch (error) {
+    console.log(error);
+
+    return {
+      success: false,
+      data: error.response?.data,
+    };
+  }
+};

@@ -8,6 +8,7 @@ import Navbar from "./components/Navbar.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
 import VerifyEmail from "./pages/VerifyEmail.jsx";
+import Profile from "./pages/Profile.jsx";
 
 import PostList from "./pages/Posts/PostList.jsx";
 import PostDetail from "./pages/Posts/PostDetail.jsx";
@@ -58,7 +59,8 @@ export default function App() {
         const response = await refreshAccessToken();
 
         if (!response.success) {
-          console.log("REFRESH FAILED");
+          console.log("REFRESH FAILED — logging out");
+          setAccessToken(null); // <-- was missing: drop the dead token so ProtectedRoute redirects
           return;
         }
 
@@ -73,7 +75,7 @@ export default function App() {
 
   return (
     <div className="page">
-      <Navbar />
+      <Navbar accessToken={accessToken} setAccessToken={setAccessToken} />
 
       <main className="main">
         <Routes>
@@ -134,6 +136,18 @@ export default function App() {
                 authLoading={authLoading}
               >
                 <PostForm accessToken={accessToken} />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route
+            path="/profile"
+            element={
+              <ProtectedRoute
+                accessToken={accessToken}
+                authLoading={authLoading}
+              >
+                <Profile accessToken={accessToken} />
               </ProtectedRoute>
             }
           />
